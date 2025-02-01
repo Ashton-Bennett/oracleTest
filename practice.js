@@ -82,50 +82,23 @@ const client = new os.ObjectStorageClient({
       }
     }
 
-    async function getObjectAndShow() {
-      try {
-        const getObjectResponse = await client.getObject(getObjectRequest);
-        console.log("Get Object executed successfully.");
-
-        // Convert ReadableStream to Buffer
-        const chunks = [];
-        for await (const chunk of getObjectResponse.value) {
-          chunks.push(chunk);
-        }
-        const buffer = Buffer.concat(chunks);
-
-        // Convert Buffer to Base64
-        const base64Image = buffer.toString("base64");
-
-        // Create Data URL for image
-        const mimeType = "image/png"; // Change if needed (e.g., "image/jpeg")
-        const dataUrl = `data:${mimeType};base64,${base64Image}`;
-
-        // Log Data URL (copy and paste into a browser to view)
-        console.log("Copy this into your browser to view the image:");
-        console.log(dataUrl);
-      } catch (error) {
-        console.error("Error fetching object:", error);
-      }
-    }
-
-    getObjectAndShow();
+    const fileLocation = "/Users/ashtonbennett/Desktop/cat_star.webp";
 
     // Create stream to upload
-    // const stats = fs.statSync(fileLocation);
-    // const nodeFsBlob = new os.NodeFSBlob(fileLocation, stats.size);
-    // const objectData = await nodeFsBlob.getData();
+    const stats = fs.statSync(fileLocation);
+    const nodeFsBlob = new os.NodeFSBlob(fileLocation, stats.size);
+    const objectData = await nodeFsBlob.getData();
 
-    // console.log("Bucket is created. Now adding object to the Bucket.");
-    // const putObjectRequest = {
-    //   namespaceName: namespace,
-    //   bucketName: bucket,
-    //   putObjectBody: objectData,
-    //   objectName: object,
-    //   contentLength: stats.size,
-    // };
-    // const putObjectResponse = await client.putObject(putObjectRequest);
-    // console.log("Put Object executed successfully" + putObjectResponse);
+    console.log("Now adding object to the Bucket.");
+    const putObjectRequest = {
+      putObjectBody: objectData,
+      objectName: "Kizzycat",
+      contentLength: stats.size,
+      bucketName: "bucket-20240728-0636",
+      namespaceName: "axgkqzms7vaf",
+    };
+    const putObjectResponse = await client.putObject(putObjectRequest);
+    console.log("Put Object executed successfully" + putObjectResponse);
 
     // const isSameStream = compareStreams(objectData, getObjectResponse.value);
     // console.log(
